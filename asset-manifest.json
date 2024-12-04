@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/sample/static/css/main.4b1d9e87.css",
-    "main.js": "/sample/static/js/main.9b6ee135.js",
-    "static/js/453.39a12708.chunk.js": "/sample/static/js/453.39a12708.chunk.js",
-    "index.html": "/sample/index.html",
-    "main.4b1d9e87.css.map": "/sample/static/css/main.4b1d9e87.css.map",
-    "main.9b6ee135.js.map": "/sample/static/js/main.9b6ee135.js.map",
-    "453.39a12708.chunk.js.map": "/sample/static/js/453.39a12708.chunk.js.map"
+    "main.css": "/Streamusic/static/css/main.4b1d9e87.css",
+    "main.js": "/Streamusic/static/js/main.f93d8d67.js",
+    "static/js/453.39a12708.chunk.js": "/Streamusic/static/js/453.39a12708.chunk.js",
+    "index.html": "/Streamusic/index.html",
+    "main.4b1d9e87.css.map": "/Streamusic/static/css/main.4b1d9e87.css.map",
+    "main.f93d8d67.js.map": "/Streamusic/static/js/main.f93d8d67.js.map",
+    "453.39a12708.chunk.js.map": "/Streamusic/static/js/453.39a12708.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.4b1d9e87.css",
-    "static/js/main.9b6ee135.js"
+    "static/js/main.f93d8d67.js"
   ]
 }
