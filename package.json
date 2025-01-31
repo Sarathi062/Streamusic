@@ -2,7 +2,7 @@
   "name": "streamusic",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://Sarathi062.github.io/Streamusic",
+  "homepage": "/",
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
