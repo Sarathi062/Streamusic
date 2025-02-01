@@ -110,6 +110,7 @@ function Navbar({ setSearchResults }) {
 
   const handleClose = () => {
     setOpen(false);
+    alert("You are logged in successfully" + " " + localStorage.getItem("spotifyAccessToken"));
 
   }
   useEffect(() => {
