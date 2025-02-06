@@ -8,6 +8,8 @@ import {
 import ClearIcon from '@mui/icons-material/Clear';
 import MusicPlayer from "./MusicPlayer"; // Import MusicPlayer
 
+import Alert from '@mui/material/Alert';
+
 const socket = io("https://streamusic-backend.onrender.com");
 
 export default function AdminQueue() {
@@ -95,8 +97,9 @@ export default function AdminQueue() {
                 <Stack alignItems="center">
                     <CircularProgress style={{ color: "black" }} />
                 </Stack>
-            ) : (
-                <Box sx={{
+            ) : (<>
+                <Button>Playing Songs</Button>
+                {queue.length > 0 ? (<Box sx={{
                     maxHeight: adminLogin ? "700px" : "200px",
                     overflowY: "auto",
                     scrollbarWidth: "thin",
@@ -104,12 +107,10 @@ export default function AdminQueue() {
                     "&::-webkit-scrollbar-thumb": { background: "#888", borderRadius: "4px" }
                 }}>
                     <List sx={{ width: "100%" }}>
-                        <Typography variant="h6" color="text.primary">
-                            Playing Songs
-                        </Typography>
+
                         {queue.map((song, index) => {
                             const title = song.name || song.title || "Unknown Title";
-                            const artist = song.artists?.[0]?.name || song.channelTitle || "Unknown Artist";
+                            const artist = song.artists?.[0]?.name || song.channelTitle || song.artist || "Unknown Artist";
                             const image = song.album?.images?.[0]?.url || song.thumbnail || "";
 
                             return (
@@ -136,11 +137,11 @@ export default function AdminQueue() {
                             );
                         })}
                     </List>
-                </Box>
+                </Box>) : (<Alert severity="info">Add Songs to play.</Alert>)}</>
             )}
 
             {/* Music Player Component */}
-            {currentSong && <MusicPlayer song={currentSong} onPrev={handlePrev} onNext={handleNext}  />}
+            {currentSong && <MusicPlayer song={currentSong} onPrev={handlePrev} onNext={handleNext} />}
         </Stack>
     );
 }

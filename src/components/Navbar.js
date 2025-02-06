@@ -128,9 +128,11 @@ function Navbar({ setSearchResults, setShowQueue }) {
 
   const handleClose = () => {
     navigate('/Streamusic');
-    dispatch(setOpen(false));
+    if (logedIn) {
+      dispatch(setOpen(false));
 
 
+    }
   }
   useEffect(() => {
     if (UaccessToken) {

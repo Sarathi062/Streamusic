@@ -7,8 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { get } from 'lodash';
 import { setUserQueueCount } from "../store/usercountSlice.js";
 
-
-function QueuedSongs({ onSongSelect, queuedSong, setQueue,adminLogin }) {
+function QueuedSongs({ onSongSelect, queuedSong, setQueue, adminLogin }) {
     const dispatch = useDispatch();
     const count = useSelector((state) => state.userqueuecount.userqueuecount);
     const queueCount = parseInt(document.cookie
@@ -33,17 +32,17 @@ function QueuedSongs({ onSongSelect, queuedSong, setQueue,adminLogin }) {
             dispatch(setUserQueueCount(0));
             sendToQueue(queuedSong);
             setQueue([]); // Clear the queue
-            
+
         }
     };
     const handleaddtoQueueAdmin = () => {
-        if (queuedSong.length >=1) {
+        if (queuedSong.length >= 1) {
             document.cookie = `queueCount=0;path=/; secure; SameSite=None`;
             sendToQueue(queuedSong);
             setQueue([]); // Clear the queue
         }
     };
-    
+
     const handleQueueClick = () => {
         if (adminLogin) {
             handleaddtoQueueAdmin();
@@ -74,7 +73,7 @@ function QueuedSongs({ onSongSelect, queuedSong, setQueue,adminLogin }) {
                     {queuedSong.map((song, index) => {
                         const track = song.track || {};
                         const title = song.name || song.title || "Unknown Title";
-                        const artist = song.artists?.[0]?.name || "";
+                        const artist = song.artists?.[0]?.name || song.artist || "";
                         const duration = song.duration_ms || song.duration || 0;
                         const image = song.album?.images?.[0]?.url || song.thumbnail || "";
 

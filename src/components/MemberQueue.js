@@ -6,6 +6,8 @@ import {
     Button
 } from "@mui/material";
 
+import Alert from '@mui/material/Alert';
+
 const socket = io("https://streamusic-backend.onrender.com");
 
 export default function MemberQueue() {
@@ -51,11 +53,9 @@ export default function MemberQueue() {
                     <CircularProgress style={{ color: "black" }} />
                 </Stack>
             ) : (
-                //<Typography variant="h6" color="text.primary">
-                //     Playing Songs
-                // </Typography>
-                <><Button > Playing Songs</Button>
-                    <Box sx={{
+                <>
+                    <Button > Playing Songs</Button>
+                    {queue.length > 0 ? (<Box sx={{
                         maxHeight: adminLogin ? "700px" : "400px",
                         overflowY: "auto",
                         scrollbarWidth: "thin",
@@ -66,7 +66,7 @@ export default function MemberQueue() {
 
                             {queue.map((song, index) => {
                                 const title = song.name || song.title || "Unknown Title";
-                                const artist = song.artists?.[0]?.name || song.channelTitle || "Unknown Artist";
+                                const artist = song.artists?.[0]?.name || song.channelTitle || song.artist || "Unknown Artist";
                                 const image = song.album?.images?.[0]?.url || song.thumbnail || "";
 
                                 return (
@@ -90,7 +90,7 @@ export default function MemberQueue() {
                                 );
                             })}
                         </List>
-                    </Box></>
+                    </Box>) : (<Alert severity="info">Add Songs to play.</Alert>)}</>
             )}
 
         </Stack>
