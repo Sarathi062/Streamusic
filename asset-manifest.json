@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/Streamusic/static/css/main.83625238.css",
-    "main.js": "/Streamusic/static/js/main.547d406b.js",
+    "main.js": "/Streamusic/static/js/main.5bd9e444.js",
     "static/js/453.39a12708.chunk.js": "/Streamusic/static/js/453.39a12708.chunk.js",
     "index.html": "/Streamusic/index.html",
     "main.83625238.css.map": "/Streamusic/static/css/main.83625238.css.map",
-    "main.547d406b.js.map": "/Streamusic/static/js/main.547d406b.js.map",
+    "main.5bd9e444.js.map": "/Streamusic/static/js/main.5bd9e444.js.map",
     "453.39a12708.chunk.js.map": "/Streamusic/static/js/453.39a12708.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.83625238.css",
-    "static/js/main.547d406b.js"
+    "static/js/main.5bd9e444.js"
   ]
 }
