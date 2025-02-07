@@ -29,7 +29,7 @@ function QueuedSongs({ onSongSelect, queuedSong, adminLogin }) {
     };
     const handleaddtoQueue = () => {
         if (queuedSong.length <= 7) {
-            document.cookie = `queueCount=${count + queueCount}; max-age=${6 * 60 * 60}; path=/; secure; SameSite=None`;
+            document.cookie = `queueCount=${count + queueCount}; max-age=${1 * 60 * 60}; path=/; secure; SameSite=None`;
             dispatch(setUserQueueCount(0));
             sendToQueue(queuedSong);
             dispatch(setQueue([]));
