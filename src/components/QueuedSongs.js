@@ -15,7 +15,8 @@ function QueuedSongs({ onSongSelect, queuedSong, adminLogin }) {
         .split('; ')
         .find(cookie => cookie.startsWith('queueCount='))
         ?.split('=')[1] || 0);
-
+        
+      
     if (queuedSong.length === 0) { return null; }
 
     const sendToQueue = async (queuedSongs) => {
@@ -30,6 +31,7 @@ function QueuedSongs({ onSongSelect, queuedSong, adminLogin }) {
     const handleaddtoQueue = () => {
         if (queuedSong.length <= 7) {
             document.cookie = `queueCount=${count + queueCount}; max-age=${1 * 60 * 60}; path=/; secure; SameSite=None`;
+
             dispatch(setUserQueueCount(0));
             sendToQueue(queuedSong);
             dispatch(setQueue([]));
@@ -37,9 +39,11 @@ function QueuedSongs({ onSongSelect, queuedSong, adminLogin }) {
 
         }
     };
+
+    
     const handleaddtoQueueAdmin = () => {
         if (queuedSong.length >= 1) {
-            document.cookie = `queueCount=0;path=/; secure; SameSite=None`;
+            document.cookie = `queueCount=0;path=/;max-age=${60 * 60 * 24 * 365 * 10}; secure; SameSite=None`;
             sendToQueue(queuedSong);
             dispatch(setQueue([]));
             // setQueue([]);  Clear the queue
@@ -58,6 +62,7 @@ function QueuedSongs({ onSongSelect, queuedSong, adminLogin }) {
         const seconds = ((ms % 60000) / 1000).toFixed(0);
         return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
     }
+
 
     return (
         <Stack spacing={3} sx={{ width: "100%", bgcolor: "background.paper", p: 2 }}>

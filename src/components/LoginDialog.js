@@ -19,6 +19,7 @@ const LoginDialog = ({ open, handleClose }) => {
         if (email === "thepack@gmail.com" && password === "packk") {
             document.cookie = `logedIn=true; path=/; max-age=${60 * 60 * 24 * 365 * 10}; Secure; SameSite=None`;
             document.cookie = `adminLogin=true; path=/; max-age=${60 * 60 * 24 * 365 * 10}; Secure; SameSite=None`;
+            document.cookie = `queueCount=0;path=/;max-age=${60 * 60 * 24 * 365 * 10}; secure; SameSite=None`;
             handleClose();
         } else {
             alert("Invalid email or password");

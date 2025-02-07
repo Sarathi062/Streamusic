@@ -16,6 +16,7 @@ import LikedSongs from './components/LikedSongs';
 import AdminQueue from './components/AdminQueue';
 import MemberQueue from './components/MemberQueue';
 import { setQueue } from './store/queuedSongSlice';
+import Alert from '@mui/material/Alert';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
@@ -41,8 +42,7 @@ function App() {
     .split('; ')
     .find(cookie => cookie.startsWith('adminLogin='))
     ?.split('=')[1] === 'true';
-  const spotifyAppExpires = parseInt(getCookie('spotifyAppExpiresAt'), 10);
-
+  const queueCount = parseInt(getCookie('queueCount'), 10);
   const dispatch = useDispatch();
   const open = useSelector((state) => state.dialog.open);
   const [currentSong, setCurrentSong] = useState(null);
@@ -117,46 +117,7 @@ function App() {
     await fetchAccessToken();
   };
 
-  //user access token
-  const getuserRefereshtoken = async () => {
-    const refreshToken = getCookie('spotifyRefreshToken');
-    const spotifyExpiresAt = parseInt(getCookie('spotifyExpiresAt'), 10);
-    const spotifyAccessToken = getCookie('spotifyAccessToken');
-    const clientId = process.env.REACT_APP_CLIENT_ID;
-    const clientSecret = process.env.REACT_APP_CLIENT_SECRET;
 
-    if (!refreshToken || refreshToken === "null") return;
-
-    if (Date.now() >= spotifyExpiresAt || (!spotifyAccessToken || spotifyAccessToken === "null")) {
-      if (!refreshToken) return;
-      try {
-        const response = await fetch("https://accounts.spotify.com/api/token", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            Authorization: "Basic " + btoa(`${clientId}:${clientSecret}`)
-          },
-          body: new URLSearchParams({
-            grant_type: "refresh_token",
-            refresh_token: refreshToken,
-          }),
-        });
-
-        const data = await response.json();
-
-        if (data.access_token) {
-          const expiresInMs = Date.now() + data.expires_in * 1000;
-          dispatch(setAuth({ userauth: true, UaccessToken: data.access_token }));
-          document.cookie = `LogedIn=true; path=/;max-age=${data.expires_in} Secure; SameSite=None`;
-          document.cookie = `spotifyAccessToken=${data.access_token}; path=/; max-age=${data.expires_in};Secure; SameSite=None`;
-          document.cookie = `spotifyExpiresAt=${expiresInMs}; max-age=${data.expires_in} path=/; Secure; SameSite=None`;
-
-        }
-      } catch (error) {
-        console.error("Error refreshing access token:", error);
-      }
-    }
-  }
 
   useEffect(() => {
     const logedIn = getCookie('logedIn');
@@ -165,14 +126,6 @@ function App() {
       dispatch(setAuth({ userauth: true, UaccessToken: spotifyAccessToken }));
     }
     getToken();
-    getuserRefereshtoken();
-
-    // Set an interval to refresh token every 60 minutes (3600 sec)
-    const refreshInterval = setInterval(() => {
-      getuserRefereshtoken();
-    }, 3600 * 1000); // 60 min in milliseconds
-
-    return () => clearInterval(refreshInterval); // Cleanup on unmount
 
   }, []);
 
@@ -187,21 +140,44 @@ function App() {
 
 
 
-  const handleNextSong = () => {
-    if (queuedSong.length > 0) {
-      const nextSong = queuedSong[0];
-      setCurrentSong(nextSong);
-      dispatch(setQueue(queuedSong.slice(1)))
-      //setQueue(queuedSong.slice(1));  Remove the first song from the queue
-    } else {
-      setCurrentSong(null); // No more songs in the queue
-    }
-  };
 
-  const handlePrevSong = () => {
-    // Implement if needed for going to the previous song
-  };
+  const [timeLeft, setTimeLeft] = useState(0); // Time left in seconds
 
+  useEffect(() => {
+    // Function to calculate the remaining time
+    const calculateTimeLeft = () => {
+      const endTime = parseInt(getCookie('endTime'));
+      if (endTime) {
+        const currentTime = new Date().getTime();
+        const timeLeft = Math.floor((new Date(endTime).getTime() - currentTime) / 1000);
+        setTimeLeft(timeLeft > 0 ? timeLeft : 0);
+      }
+    };
+
+    // Check if there's already an end time in cookies on component mount
+    calculateTimeLeft();
+
+    // Start a timer to update the countdown every second
+    const timer = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev > 0) {
+          return prev - 1;
+        } else {
+          clearInterval(timer);
+          return 0;
+        }
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const startCountdown = (seconds) => {
+    const endTime = new Date().getTime() + seconds * 1000;
+    document.cookie = `endTime=${new Date(endTime).toString()}; path=/; max-age=${seconds}; Secure; SameSite=None`; // Save the end time in cookies
+    setTimeLeft(seconds);
+  };
+ 
   return (
     <>
       <Box component="section" >
@@ -209,6 +185,7 @@ function App() {
           <>
             <Grid size={12}>
               <Navbar setSearchResults={setSearchResults} setShowQueue={setShowQueue} />
+              {queueCount == 7 && <Alert severity="warning">You can add more songs after 1 hour.</Alert>}
             </Grid>
             {windowSize.width < 650 ? (
               <Stack spacing={2}>
@@ -260,7 +237,7 @@ function App() {
                   {showqueue && <AdminQueue />}
                 </Grid>
                 <Grid size={queuedSong.length === 0 ? 12 : 6}>
-                  <ListOFSearchedSong searchResults={searchResults}  adminLogin={adminLogin} />
+                  <ListOFSearchedSong searchResults={searchResults} adminLogin={adminLogin} />
                 </Grid>
                 <Grid size={6}>
                   <QueuedSongs onSongSelect={setCurrentSong} queuedSong={queuedSong} adminLogin={adminLogin} />
