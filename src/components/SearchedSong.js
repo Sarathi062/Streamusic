@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Grid } from '@mui/material/Grid2';
 import { Box, Button } from '@mui/material';
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "../store/loadingSlice.js";
@@ -9,17 +8,14 @@ import {
     List, ListItem, ListItemAvatar, ListItemText, Avatar, Checkbox,
     Divider, Typography, Stack, CircularProgress, Skeleton
 } from "@mui/material";
-import { get, set } from 'lodash';
-import LikedSongs from './LikedSongs.js';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { setQueue } from '../store/queuedSongSlice';
 
-
-export default function SearchedSong({ searchResults, setQueue, adminLogin }) {
-    const [likedSongs, setLikedSongs] = useState([]);
-    const { userauth, UaccessToken } = useSelector((state) => state.userauth);
+export default function SearchedSong({ searchResults, adminLogin }) {
     const dispatch = useDispatch();
+    const queuedSong = useSelector((state) => state.queuedSong.queuedSong);
     const [trendingSongs, setTrendingSongs] = useState([]);
-    const MAX_QUEUE_LIMIT = 5; // Set max limit
+    const MAX_QUEUE_LIMIT = 7; // Set max limit
     const searchQuery = useSelector((state) => state.searchQuery.value);
     const loading = useSelector((state) => state.loading.loading);
     const count = useSelector((state) => state.userqueuecount.userqueuecount);
@@ -98,54 +94,38 @@ export default function SearchedSong({ searchResults, setQueue, adminLogin }) {
 
 
     const addToQueue = (song, isChecked) => {
-        setQueue((prevQueue) => {
-            if (isChecked) {
-                if (adminLogin || count < MAX_QUEUE_LIMIT) { // Admin can bypass limit
-                    dispatch(setUserQueueCount(count + 1));
-                    return [...prevQueue, song]; // Add song
-                } else {
-                    return prevQueue; // Don't add if limit reached
-                }
-            } else {
-                dispatch(setUserQueueCount(count - 1)); // Decrease count
-                return prevQueue.filter((s) => s.id !== song.id); // Remove song
+        if (isChecked) {
+            if (adminLogin || queueCount + count < MAX_QUEUE_LIMIT) { // Admin can bypass limit, ensure limit is enforced
+                dispatch(setUserQueueCount(count + 1)); // Increase the count
+                dispatch(setQueue([...queuedSong, song])); // Add song to the queue
             }
-        });
+        } else {
+            dispatch(setUserQueueCount(count - 1)); // Decrease the count
+            dispatch(setQueue(queuedSong.filter((s) => s.id !== song.id))); // Remove song from the queue
+        }
     };
 
-    useEffect(() => {
-        if (!UaccessToken) return;
-        const fetchLikedSongs = async () => {
-            const url = `https://api.spotify.com/v1/me/tracks?limit=50`;
-            const response = await fetch(url, {
-                headers: {
-                    Authorization: `Bearer ${UaccessToken}`,
-                },
-            });
-            const data = await response.json();
-            if (data.items) {
-                const likedSongs = data.items.map((item) => ({
-                    id: item.track.id,
-                    title: item.track.name,
-                    artist: item.track.artists.map((artist) => artist.name).join(', '),
-                    album: item.track.album.name,
-                    duration: item.track.duration_ms,
-                    thumbnail: item.track.album.images?.[0]?.url || "",
-                }));
-                setLikedSongs(likedSongs);
-            } else {
-                console.error('Error fetching liked songs:', data);
-            }
-        };
-        fetchLikedSongs();
-    }, [UaccessToken]);
+    const checkDisable = (s) => {
+        // Check if the song is already in the queue
+        const isSongQueued = queuedSong.some((song) => song.id === s.id);
 
+        // Disable the checkbox if the queue count reaches the limit, and the song is not queued
+        if (!isSongQueued && queueCount + count >= MAX_QUEUE_LIMIT) {
+            return true; // Disable checkbox for songs that are not already queued
+        }
+
+        return false; // Keep the checkbox enabled for queued songs or when limit is not reached
+    };
+
+   
     const toggelList = () => {
         setShowList(!showList);
     }
     const toggelListTS = () => {
         setShowListTS(!showListTS);
     }
+
+
     return (
         <Stack spacing={1} sx={{ width: "100%", bgcolor: "background.paper", p: 2 }}>
             <Button endIcon={showListTS ? <KeyboardArrowRightIcon /> : <KeyboardArrowDownIcon />} onClick={toggelListTS}>{searchQuery && searchResults.length > 0 ? "Searched Results" : "Trending Songs"}</Button>
@@ -186,8 +166,8 @@ export default function SearchedSong({ searchResults, setQueue, adminLogin }) {
                                             onClick={(e) => addToQueue(song, e.target.checked)}
                                             color="primary"
                                             disableRipple
-                                            disabled={!adminLogin ? queueCount + count >= MAX_QUEUE_LIMIT : false}
-
+                                            // disabled={!adminLogin ? queueCount + count >= MAX_QUEUE_LIMIT : false}
+                                            disabled={checkDisable(song)}
                                         />
 
                                     </ListItem>
@@ -223,8 +203,8 @@ export default function SearchedSong({ searchResults, setQueue, adminLogin }) {
                                             onClick={(e) => addToQueue(song, e.target.checked)}
                                             color="primary"
                                             disableRipple
-                                            disabled={!adminLogin ? queueCount + count >= MAX_QUEUE_LIMIT : false}
-
+                                            // disabled={!adminLogin ? queueCount + count >= MAX_QUEUE_LIMIT : false}
+                                            disabled={checkDisable(song)}
                                         />
 
                                     </ListItem>
@@ -237,54 +217,7 @@ export default function SearchedSong({ searchResults, setQueue, adminLogin }) {
             </Box>
             </>
             )}
-            {!adminLogin && (<><Button endIcon={showList ? <KeyboardArrowRightIcon /> : <KeyboardArrowDownIcon />} onClick={toggelList}>Liked Songs</Button>
 
-                <Box sx={{
-                    maxHeight: "400px",  // Adjust height as needed
-                    overflowY: "auto",
-                    scrollbarWidth: "thin", // Firefox
-                    "&::-webkit-scrollbar": { width: "8px" }, // WebKit browsers
-                    "&::-webkit-scrollbar-thumb": { background: "#888", borderRadius: "4px" }
-                }}>
-                    <List sx={{ width: "100%" }} hidden={showList}>
-                        {/* 🔍 Liked Songs Section */}
-                        {likedSongs.length > 0 && UaccessToken && (
-                            <>
-
-                                {likedSongs.map((song) => (
-                                    <React.Fragment key={song.id}>
-                                        <ListItem alignItems="flex-start" sx={{ p: 0 }}>
-                                            <ListItemAvatar>
-                                                {song.thumbnail ? (
-                                                    <Avatar alt={song.title} src={song.thumbnail} />
-                                                ) : (
-                                                    <Skeleton variant="circular" width={40} height={40} />
-                                                )}
-                                            </ListItemAvatar>
-                                            <ListItemText
-                                                primary={song.title}
-                                                secondary={
-                                                    <Typography variant="body2" color="text.secondary">
-                                                        {song.artist}
-                                                    </Typography>
-                                                }
-                                            />
-                                            <Checkbox
-                                                onClick={(e) => addToQueue(song, e.target.checked)}
-                                                color="primary"
-                                                disableRipple
-                                                disabled={!adminLogin ? queueCount + count >= MAX_QUEUE_LIMIT : false}
-
-                                            />
-
-                                        </ListItem>
-                                        <Divider variant="inset" component="li" />
-                                    </React.Fragment>
-                                ))}
-                            </>
-                        )}
-                    </List>
-                </Box> </>)}
 
 
         </Stack>

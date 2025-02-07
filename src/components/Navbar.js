@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { styled, alpha } from "@mui/material/styles";
 import { AppBar, Box, Toolbar, Typography, InputBase, Button } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -13,6 +13,7 @@ import { setLoading } from "../store/loadingSlice.js";
 import QueueMusicIcon from '@mui/icons-material/QueueMusic';
 import { setOpen } from "../store/dialogSlice.js";
 import { Password } from "@mui/icons-material";
+
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -62,30 +63,6 @@ function Navbar({ setSearchResults, setShowQueue }) {
   const [session, setSession] = React.useState(null);
 
 
-  const fetchUserData = async (UaccessToken) => {
-    try {
-      const response = await fetch("https://api.spotify.com/v1/me", {
-        headers: {
-          Authorization: `Bearer ${UaccessToken}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch user data");
-      }
-
-      const userData = await response.json();
-      return {
-        name: userData.display_name,
-        email: userData.email,
-        image: userData.images?.[0]?.url || "",
-      };
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-      return null;
-    }
-  };
-
   const logedIn = document.cookie
     .split('; ')
     .find(cookie => cookie.startsWith('logedIn='))
@@ -94,32 +71,24 @@ function Navbar({ setSearchResults, setShowQueue }) {
     .split('; ')
     .find(cookie => cookie.startsWith('adminLogin='))
     ?.split('=')[1] === 'true';
-  const authentication = React.useMemo(() => {
-    return {
-      signIn: () => {
-        dispatch(setOpen(true));
-        if (data) {
-          setSession({ user: data });
 
-        }
-        else if (adminLogin) {
-          setSession({ user: { name: "Admin", email: "thepack@gmail.com" } });
-        }
-      },
-      signOut: () => {
-        setSession(null);
-        document.cookie = "logedIn=; path=/;  Secure;max-age=0; SameSite=None";
-        document.cookie = "spotifyAccessToken=; path=/; max-age=0; Secure; SameSite=None";
-        document.cookie = "spotifyExpiresAt=; path=/; max-age=0;Secure; SameSite=None";
-        document.cookie = "spotifyRefreshToken=; path=/; max-age=0; Secure; SameSite=None";
-        document.cookie = "adminLogin=; path=/; Secure;max-age=0; SameSite=None";
-
-        dispatch(setAuth({ userauth: false }));
-        dispatch(setOpen(true));
-
-      },
-    };
-  }, []);
+  const authentication = useMemo(() => ({
+    signIn: () => {
+      dispatch(setOpen(true));
+      if (data || adminLogin) {
+        setSession({
+          user: data || { name: "Admin", email: "thepack@gmail.com" }
+        });
+      }
+    },
+    signOut: () => {
+      setSession({ user: null });
+      document.cookie = "logedIn=; path=/; Secure; max-age=0; SameSite=None";
+      document.cookie = "adminLogin=; path=/; Secure; max-age=0; SameSite=None";
+      dispatch(setAuth({ userauth: false }));
+      dispatch(setOpen(true));
+    },
+  }), [data, adminLogin, dispatch]);
 
   const showQueue = () => {
     setShowQueue(prevState => !prevState);
@@ -136,21 +105,21 @@ function Navbar({ setSearchResults, setShowQueue }) {
 
   }
   useEffect(() => {
-    if (UaccessToken) {
-      fetchUserData(UaccessToken).then((userData) => {
-        if (userData) {
-          setdata(userData);
-          setSession({ user: userData }); // Ensure session format
-          dispatch(setOpen(false));
-        }
-      });
+    if (logedIn && !adminLogin) {
+      // Regular user login
+      setSession({ user: { name: "Member", email: "" } });
+      dispatch(setOpen(false));
     } else if (adminLogin) {
+      // Admin login
       setSession({ user: { name: "Admin", email: "thepack@gmail.com" } });
       dispatch(setOpen(false));
     } else {
+      // Neither logged in nor admin
+      setSession(null);
       dispatch(setOpen(true));
     }
-  }, [UaccessToken, adminLogin]); // Added adminLogin dependency
+  }, [logedIn, adminLogin, dispatch]);
+
 
   // Debounced search function
   useEffect(() => {
@@ -210,13 +179,14 @@ function Navbar({ setSearchResults, setShowQueue }) {
             />
           </Search>
 
-          <Typography variant="h6" sx={{ fontWeight: 100, fontSize: 15, padding: 1 }}><AuthenticationContext.Provider value={authentication} >
-            <SessionContext.Provider value={session}>
-              {/* preview-start */}
-              <Account />
-              {/* preview-end */}
-            </SessionContext.Provider>
-          </AuthenticationContext.Provider>
+          <Typography variant="h6" sx={{ fontWeight: 100, fontSize: 15, padding: 1 }}>
+            <AuthenticationContext.Provider value={authentication} >
+              <SessionContext.Provider value={session}>
+                {/* preview-start */}
+                <Account />
+                {/* preview-end */}
+              </SessionContext.Provider>
+            </AuthenticationContext.Provider>
           </Typography>
           {!logedIn && <LoginDialog open={open} handleClose={handleClose} />}
         </Box>

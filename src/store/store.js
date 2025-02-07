@@ -5,6 +5,7 @@ import { loadingReducer } from "./loadingSlice.js";
 import { changewindowReducer } from "./changewindowSlice.js";
 import { userqueuecountReducer } from "./usercountSlice.js";
 import { dialogReducer } from "./dialogSlice.js";
+import { queuedSongReducer } from "./queuedSongSlice.js"
 const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -14,6 +15,7 @@ const store = configureStore({
     changewindow: changewindowReducer,
     userqueuecount: userqueuecountReducer,
     dialog: dialogReducer,
+    queuedSong: queuedSongReducer
   },
 });
 

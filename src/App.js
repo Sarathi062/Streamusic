@@ -15,6 +15,7 @@ import { setWindow } from "./store/changewindowSlice";
 import LikedSongs from './components/LikedSongs';
 import AdminQueue from './components/AdminQueue';
 import MemberQueue from './components/MemberQueue';
+import { setQueue } from './store/queuedSongSlice';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
@@ -45,7 +46,9 @@ function App() {
   const dispatch = useDispatch();
   const open = useSelector((state) => state.dialog.open);
   const [currentSong, setCurrentSong] = useState(null);
-  const [queuedSong, setQueue] = useState([]);
+  const queuedSong = useSelector((state) => state.queuedSong.queuedSong);
+
+  // const [queuedSong, setQueue] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const changewindow = useSelector((state) => state.changewindow.changewindow);
 
@@ -188,7 +191,8 @@ function App() {
     if (queuedSong.length > 0) {
       const nextSong = queuedSong[0];
       setCurrentSong(nextSong);
-      setQueue(queuedSong.slice(1)); // Remove the first song from the queue
+      dispatch(setQueue(queuedSong.slice(1)))
+      //setQueue(queuedSong.slice(1));  Remove the first song from the queue
     } else {
       setCurrentSong(null); // No more songs in the queue
     }
@@ -212,10 +216,10 @@ function App() {
                   {showqueue && <MemberQueue />}
                 </Grid>
                 <Grid size={12}>
-                  {logedIn && (<ListOFSearchedSong searchResults={searchResults} setQueue={setQueue} />)}
+                  {logedIn && (<ListOFSearchedSong searchResults={searchResults} />)}
                 </Grid>
                 <Grid size={12}>
-                  <QueuedSongs onSongSelect={setCurrentSong} queuedSong={queuedSong} setQueue={setQueue} />
+                  <QueuedSongs onSongSelect={setCurrentSong} queuedSong={queuedSong} />
                 </Grid>
               </Stack>
             ) : (
@@ -224,10 +228,10 @@ function App() {
                   {showqueue && <MemberQueue />}
                 </Grid>
                 <Grid size={queuedSong.length === 0 ? 12 : 6}>
-                  {logedIn && (<ListOFSearchedSong searchResults={searchResults} setQueue={setQueue} />)}
+                  {logedIn && (<ListOFSearchedSong searchResults={searchResults} />)}
                 </Grid>
                 <Grid size={6}>
-                  <QueuedSongs onSongSelect={setCurrentSong} queuedSong={queuedSong} setQueue={setQueue} />
+                  <QueuedSongs onSongSelect={setCurrentSong} queuedSong={queuedSong} />
                 </Grid>
               </Grid>
             )}
@@ -244,10 +248,10 @@ function App() {
                   {showqueue && <AdminQueue />}
                 </Grid>
                 <Grid size={12}>
-                  <ListOFSearchedSong searchResults={searchResults} setQueue={setQueue} adminLogin={adminLogin} />
+                  <ListOFSearchedSong searchResults={searchResults} adminLogin={adminLogin} />
                 </Grid>
                 <Grid size={12}>
-                  <QueuedSongs onSongSelect={setCurrentSong} queuedSong={queuedSong} setQueue={setQueue} />
+                  <QueuedSongs onSongSelect={setCurrentSong} queuedSong={queuedSong} />
                 </Grid>
               </Stack>
             ) : (
@@ -256,10 +260,10 @@ function App() {
                   {showqueue && <AdminQueue />}
                 </Grid>
                 <Grid size={queuedSong.length === 0 ? 12 : 6}>
-                  <ListOFSearchedSong searchResults={searchResults} setQueue={setQueue} adminLogin={adminLogin} />
+                  <ListOFSearchedSong searchResults={searchResults}  adminLogin={adminLogin} />
                 </Grid>
                 <Grid size={6}>
-                  <QueuedSongs onSongSelect={setCurrentSong} queuedSong={queuedSong} setQueue={setQueue} adminLogin={adminLogin} />
+                  <QueuedSongs onSongSelect={setCurrentSong} queuedSong={queuedSong} adminLogin={adminLogin} />
                 </Grid>
               </Grid>
             )}

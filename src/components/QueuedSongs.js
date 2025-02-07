@@ -6,9 +6,9 @@ import QueueMusicIcon from "@mui/icons-material/QueueMusic";
 import { useSelector, useDispatch } from "react-redux";
 import { get } from 'lodash';
 import { setUserQueueCount } from "../store/usercountSlice.js";
+import { setQueue } from '../store/queuedSongSlice';
 
-
-function QueuedSongs({ onSongSelect, queuedSong, setQueue, adminLogin }) {
+function QueuedSongs({ onSongSelect, queuedSong, adminLogin }) {
     const dispatch = useDispatch();
     const count = useSelector((state) => state.userqueuecount.userqueuecount);
     const queueCount = parseInt(document.cookie
@@ -32,7 +32,8 @@ function QueuedSongs({ onSongSelect, queuedSong, setQueue, adminLogin }) {
             document.cookie = `queueCount=${count + queueCount}; max-age=${6 * 60 * 60}; path=/; secure; SameSite=None`;
             dispatch(setUserQueueCount(0));
             sendToQueue(queuedSong);
-            setQueue([]); // Clear the queue
+            dispatch(setQueue([]));
+            // setQueue([]); Clear the queue
 
         }
     };
@@ -40,7 +41,8 @@ function QueuedSongs({ onSongSelect, queuedSong, setQueue, adminLogin }) {
         if (queuedSong.length >= 1) {
             document.cookie = `queueCount=0;path=/; secure; SameSite=None`;
             sendToQueue(queuedSong);
-            setQueue([]); // Clear the queue
+            dispatch(setQueue([]));
+            // setQueue([]);  Clear the queue
         }
     };
 
