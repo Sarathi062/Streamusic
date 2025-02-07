@@ -74,7 +74,7 @@ function QueuedSongs({ onSongSelect, queuedSong, adminLogin }) {
 
 
     return (
-        <Stack spacing={3} sx={{ width: "100%", bgcolor: "background.paper", p: 2, mb: 16 }}>
+        <Stack spacing={3} sx={{ width: "100%", bgcolor: "background.paper", p: 2, mb: 18 }}>
 
 
             <Button>Selected Songs</Button>

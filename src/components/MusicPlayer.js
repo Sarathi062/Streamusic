@@ -147,7 +147,7 @@ function MusicPlayer({ song, onPrev, onNext }) {
       <Box
         sx={{
           position: "fixed",
-          bottom: 0,
+          bottom: 11,
           left: 0,
           width: "100%",
           backgroundColor: "#fff",
