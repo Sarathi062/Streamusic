@@ -51,6 +51,7 @@ function QueuedSongs({ onSongSelect, queuedSong, adminLogin }) {
     const handleaddtoQueueAdmin = () => {
         if (queuedSong.length >= 1) {
             document.cookie = `queueCount=0;path=/;max-age=${60 * 60 * 24 * 365 * 10}; secure; SameSite=None`;
+            dispatch(setUserQueueCount(0));
             sendToQueue(queuedSong);
             showTemporaryAlert();
             dispatch(setQueue([]));

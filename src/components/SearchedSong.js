@@ -95,8 +95,12 @@ export default function SearchedSong({ searchResults, adminLogin }) {
 
     const addToQueue = (song, isChecked) => {
         if (isChecked) {
-            if (adminLogin || queueCount + count < MAX_QUEUE_LIMIT) { // Admin can bypass limit, ensure limit is enforced
+            if (!adminLogin && queueCount + count < MAX_QUEUE_LIMIT) { // Admin can bypass limit, ensure limit is enforced
                 dispatch(setUserQueueCount(count + 1)); // Increase the count
+                dispatch(setQueue([...queuedSong, song])); // Add song to the queue
+            }
+            else if (adminLogin) { // Admin can bypass limit, ensure limit is enforced
+                dispatch(setUserQueueCount(0));
                 dispatch(setQueue([...queuedSong, song])); // Add song to the queue
             }
         } else {
