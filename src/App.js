@@ -18,6 +18,7 @@ import MemberQueue from './components/MemberQueue';
 import { setQueue } from './store/queuedSongSlice';
 import Alert from '@mui/material/Alert';
 
+import { Link } from '@mui/material';
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
   ...theme.typography.body2,
@@ -203,6 +204,27 @@ function App() {
                 <Grid size={12}>
                   <QueuedSongs onSongSelect={setCurrentSong} queuedSong={queuedSong} />
                 </Grid>
+                <Grid size={6}>
+                  <Box
+                    sx={{
+                      position: "fixed",
+                      bottom: 0,
+                      left: 0,
+                      width: "100%",
+                      backgroundColor: "#1976d2",
+                      boxShadow: "0px -2px 10px rgba(0, 0, 0, 0.1)",
+                      zIndex: 1000,
+                      display: "flex", // Added display flex for centering
+                      justifyContent: "center",
+                      alignItems: "center",
+                      color: "#fff", // Ensure text is visible on the blue background
+                      fontSize: "16px", // Improved font size for readability
+                      textAlign: "center",
+                    }}
+                  >
+                    A Project By Sarathi
+                  </Box>
+                </Grid>
               </Stack>
             ) : (
               <Grid container spacing={1}>
@@ -214,6 +236,27 @@ function App() {
                 </Grid>
                 <Grid size={6}>
                   <QueuedSongs onSongSelect={setCurrentSong} queuedSong={queuedSong} />
+                </Grid>
+                <Grid size={6}>
+                  <Box
+                    sx={{
+                      position: "fixed",
+                      bottom: 0,
+                      left: 0,
+                      width: "100%",
+                      backgroundColor: "#1976d2",
+                      boxShadow: "0px -2px 10px rgba(0, 0, 0, 0.1)",
+                      zIndex: 1000,
+                      display: "flex", // Added display flex for centering
+                      justifyContent: "center",
+                      alignItems: "center",
+                      color: "#fff", // Ensure text is visible on the blue background
+                      fontSize: "16px", // Improved font size for readability
+                      textAlign: "center",
+                    }}
+                  >
+                    A Project By Sarathi
+                  </Box>
                 </Grid>
               </Grid>
             )}
@@ -235,9 +278,29 @@ function App() {
                 <Grid size={12}>
                   <QueuedSongs onSongSelect={setCurrentSong} queuedSong={queuedSong} />
                 </Grid>
+                <Grid size={6}>
+                  <Box
+                    sx={{
+                      position: "fixed",
+                      bottom: 0,
+                      left: 0,
+                      width: "100%",
+                      backgroundColor: "#1976d2",
+                      boxShadow: "0px -2px 10px rgba(0, 0, 0, 0.1)",
+                      zIndex: 1000,
+                      display: "flex", // Added display flex for centering
+                      justifyContent: "center",
+                      alignItems: "center",
+                      color: "#fff", // Ensure text is visible on the blue background
+                      fontSize: "16px", // Improved font size for readability
+                      textAlign: "center",
+                    }}
+                  >A Project By Sarathi
+                  </Box>
+                </Grid>
               </Stack>
             ) : (
-              <Grid container spacing={1}>
+              <Grid container spacing={1} sx={{ mb: 5 }}>
                 <Grid size={12}>
                   {showqueue && <AdminQueue />}
                 </Grid>
@@ -247,12 +310,34 @@ function App() {
                 <Grid size={6}>
                   <QueuedSongs onSongSelect={setCurrentSong} queuedSong={queuedSong} adminLogin={adminLogin} />
                 </Grid>
+                <Grid size={6}>
+                  <Box
+                    sx={{
+                      position: "fixed",
+                      bottom: 0,
+                      left: 0,
+                      width: "100%",
+                      backgroundColor: "#1976d2",
+                      boxShadow: "0px -2px 10px rgba(0, 0, 0, 0.1)",
+                      zIndex: 1000,
+                      display: "flex", // Added display flex for centering
+                      justifyContent: "center",
+                      alignItems: "center",
+                      color: "#fff", // Ensure text is visible on the blue background
+                      fontSize: "16px", // Improved font size for readability
+                      textAlign: "center",
+                    }}
+                  >
+                    A Project By Sarathi
+                  </Box>
+                </Grid>
               </Grid>
             )}
 
 
 
           </>)}
+
 
       </Box>
     </>

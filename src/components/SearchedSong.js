@@ -138,7 +138,7 @@ export default function SearchedSong({ searchResults, adminLogin }) {
                     <CircularProgress style={{ color: "black" }} />
                 </Stack>
             ) : (<><Box sx={{
-                maxHeight: "400px",  // Adjust height as needed
+                maxHeight: "500px",  // Adjust height as needed
                 overflowY: "auto",
                 scrollbarWidth: "thin", // Firefox
                 "&::-webkit-scrollbar": { width: "8px" }, // WebKit browsers
