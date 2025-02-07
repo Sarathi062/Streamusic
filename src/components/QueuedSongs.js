@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { get } from 'lodash';
 import { setUserQueueCount } from "../store/usercountSlice.js";
 import { setQueue } from '../store/queuedSongSlice';
+import { setShowAlert } from '../store/showAlertSlice.js';
 
 function QueuedSongs({ onSongSelect, queuedSong, adminLogin }) {
     const dispatch = useDispatch();
@@ -15,8 +16,8 @@ function QueuedSongs({ onSongSelect, queuedSong, adminLogin }) {
         .split('; ')
         .find(cookie => cookie.startsWith('queueCount='))
         ?.split('=')[1] || 0);
-        
-      
+
+
     if (queuedSong.length === 0) { return null; }
 
     const sendToQueue = async (queuedSongs) => {
@@ -31,20 +32,27 @@ function QueuedSongs({ onSongSelect, queuedSong, adminLogin }) {
     const handleaddtoQueue = () => {
         if (queuedSong.length <= 7) {
             document.cookie = `queueCount=${count + queueCount}; max-age=${1 * 60 * 60}; path=/; secure; SameSite=None`;
-
             dispatch(setUserQueueCount(0));
             sendToQueue(queuedSong);
+            showTemporaryAlert();
             dispatch(setQueue([]));
             // setQueue([]); Clear the queue
 
         }
     };
+    const showTemporaryAlert = () => {
+        dispatch(setShowAlert(true)); // Show the alert
+        setTimeout(() => {
+            dispatch(setShowAlert(false)); // Hide the alert after 2 seconds
+        }, 2000); // 2000 milliseconds = 2 seconds
 
-    
+    };
+
     const handleaddtoQueueAdmin = () => {
         if (queuedSong.length >= 1) {
             document.cookie = `queueCount=0;path=/;max-age=${60 * 60 * 24 * 365 * 10}; secure; SameSite=None`;
             sendToQueue(queuedSong);
+            showTemporaryAlert();
             dispatch(setQueue([]));
             // setQueue([]);  Clear the queue
         }

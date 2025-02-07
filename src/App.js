@@ -177,7 +177,11 @@ function App() {
     document.cookie = `endTime=${new Date(endTime).toString()}; path=/; max-age=${seconds}; Secure; SameSite=None`; // Save the end time in cookies
     setTimeLeft(seconds);
   };
- 
+
+  const showAlert = useSelector((state) => state.showAlert.showAlert);
+  console.log(showAlert);
+
+
   return (
     <>
       <Box component="section" >
@@ -186,6 +190,7 @@ function App() {
             <Grid size={12}>
               <Navbar setSearchResults={setSearchResults} setShowQueue={setShowQueue} />
               {queueCount == 7 && <Alert severity="warning">You can add more songs after 1 hour.</Alert>}
+              {showAlert && <Alert severity="success">Song added to queue</Alert>}
             </Grid>
             {windowSize.width < 650 ? (
               <Stack spacing={2}>
