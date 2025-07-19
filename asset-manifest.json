@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/Streamusic/static/css/main.025c0feb.css",
-    "main.js": "/Streamusic/static/js/main.fdab7779.js",
+    "main.js": "/Streamusic/static/js/main.61546a7c.js",
     "static/media/Moving The Simpsons GIF.gif": "/Streamusic/static/media/Moving The Simpsons GIF.bd7d29cefb0d3bc8dca1.gif",
     "static/media/favicon.ico": "/Streamusic/static/media/favicon.4302bafbc92d1de42e44.ico",
     "index.html": "/Streamusic/index.html",
     "main.025c0feb.css.map": "/Streamusic/static/css/main.025c0feb.css.map",
-    "main.fdab7779.js.map": "/Streamusic/static/js/main.fdab7779.js.map"
+    "main.61546a7c.js.map": "/Streamusic/static/js/main.61546a7c.js.map"
   },
   "entrypoints": [
     "static/css/main.025c0feb.css",
-    "static/js/main.fdab7779.js"
+    "static/js/main.61546a7c.js"
   ]
 }
