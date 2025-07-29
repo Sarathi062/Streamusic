@@ -18,6 +18,8 @@ import SearchedSongs from "./SearchedSongs.js";
 import MemberQueue from "./MemberQueue";
 import axios from "axios";
 
+
+
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -58,6 +60,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 function AdminDashboard({ adminLogin }) {
   const dispatch = useDispatch();
   const [roomCode, setRoomCode] = useState(null);
+  
+
   const [query, setQuery] = useState(null);
 
   const [windowSize, setWindowSize] = useState({
@@ -94,6 +98,7 @@ function AdminDashboard({ adminLogin }) {
       if (response.data.success) {
         const { roomCode, roomId } = response.data;
         // console.log("Room created or found:", roomCode);
+
         fetchRoomCode();
         // Example: You might want to display the roomCode to the admin
         // alert(`Room code: ${roomCode}`);
@@ -126,6 +131,7 @@ function AdminDashboard({ adminLogin }) {
       return null;
     }
   };
+
 
   useEffect(() => {
     fetchRoomCode();
@@ -219,7 +225,7 @@ function AdminDashboard({ adminLogin }) {
             sx={{ border: 1 }}
           />
         </Search>
-        <AdminQueue />
+        <AdminQueue roomCode={roomCode} />
         <SelectedSongs />
         {query ? (
           <SearchedSongs query={query} />

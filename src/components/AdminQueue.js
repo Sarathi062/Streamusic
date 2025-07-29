@@ -21,11 +21,12 @@ import axios from "axios";
 
 const socket = io(process.env.REACT_APP_BackEnd, { withCredentials: true }); // initiates a connection from the client to your backend server using the URL provided and triggers the io.connection function
 
-export default function AdminQueue({ adminLogin }) {
+export default function AdminQueue({ adminLogin, roomCode }) {
   const [queue, setQueue] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentSong, setCurrentSong] = useState(null); // Store selected song
-
+  const [currentRoom, setCurrentRoom] = useState(null);
+  
   const fetchQueue = async () => {
     try {
       const res = await axios.get(
@@ -55,6 +56,14 @@ export default function AdminQueue({ adminLogin }) {
       socket.off("update-queue");
     };
   }, []);
+
+  useEffect(() => {
+    if (!roomCode) return;
+
+    socket.emit("switchRoom", currentRoom, roomCode);
+
+    setCurrentRoom(roomCode);
+  }, [roomCode]);
 
   const handleSongSelect = (song) => {
     setCurrentSong(song); // Set the selected song
