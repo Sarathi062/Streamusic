@@ -2,7 +2,7 @@ import { Box, Typography, Divider, Link } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Grid from "@mui/material/Grid2";
 
-const Footer = () => {
+const Footer = ({toggleModal}) => {
   const navigate = useNavigate();
   const gohome = () => {
   navigate("/Streamusic");
@@ -14,10 +14,7 @@ const login = () => {
   window.scrollTo(0, 0);
 };
 
-const register = () => {
-  navigate("/Streamusic/admin-registration");
-  window.scrollTo(0, 0);
-};
+
 
   return (
     <Box
@@ -72,7 +69,7 @@ const register = () => {
           </Grid>
           <Grid>
             <Link
-               onClick={register}
+               onClick={toggleModal}
               color="inherit"
               underline="hover"
               display="block"

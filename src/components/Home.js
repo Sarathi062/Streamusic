@@ -26,7 +26,7 @@ import GIF from "../assets/Moving The Simpsons GIF.gif";
 // If you're using Typography from @mui/joy (optional)
 import Typography from "@mui/material/Typography";
 
-const Home = () => {
+const Home = ({ toggleModal }) => {
   const Navigate = useNavigate();
 
   const theme = createTheme({
@@ -125,9 +125,7 @@ const Home = () => {
                       boxShadow: "lg",
                       maxWidth: "200px",
                     }}
-                    onClick={() => {
-                      Navigate("/Streamusic/admin-login");
-                    }}
+                    onClick={toggleModal}
                   >
                     Host Music Session
                   </Button>

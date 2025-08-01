@@ -1,6 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Box from "@mui/material/Box";
+// import Box from "@mui/material/Box";
+import { Modal, Box } from "@mui/material";
+import React, { useState } from "react";
+import Button from "@mui/material/Button";
+
 import { Route, Routes } from "react-router-dom";
 import Nav from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -12,6 +16,11 @@ import Home from "./components/Home";
 import axios from "axios";
 
 function App() {
+  // State to show/hide modal
+  const [modalOpen, setModalOpen] = useState(false);
+
+  // Function to toggle modal
+  const toggleModal = () => setModalOpen(!modalOpen);
   // Fetching the loging cookies
   const fetchAdminCookies = async () => {
     const res = await axios.get(
@@ -51,11 +60,14 @@ function App() {
       <Box sx={{ width: "100%" }} backgroundColor="secondary.light">
         <Nav adminLogin={adminLogin} />
         <Routes>
-          <Route path="/Streamusic" element={<Home />} />
           <Route
-            path="Streamusic/admin-registration"
-            element={<AdminRegistration />}
+            path="/Streamusic"
+            element={<Home toggleModal={toggleModal} />}
           />
+          {/* <Route
+            path="Streamusic/admin-registration"
+            element={}
+          /> */}
           <Route path="Streamusic/admin-login" element={<AdminLogin />} />
           <Route path="Streamusic/user-login" element={<UserLogin />} />
 
@@ -64,7 +76,36 @@ function App() {
             element={<AdminDashboard adminLogin={adminLogin} />}
           />
         </Routes>
-        <Footer />
+
+        <Footer toggleModal={toggleModal} />
+        <Modal
+          open={modalOpen}
+          onClose={toggleModal}
+          aria-labelledby="popup-modal-title"
+          aria-describedby="popup-modal-description"
+        >
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              bgcolor: "#f0f4fc",
+              borderRadius: 2,
+              boxShadow: 24,
+              borderRadius: 5,
+              p: 0,
+              maxWidth: 600,
+              width: "90%",
+              display: "flex",
+              flexDirection: "column", // Optional: if AdminRegistration needs vertical stacking
+              alignItems: "center", // Optional: center content horizontally
+              justifyContent: "center", // Optional: center content vertically
+            }}
+          >
+            <AdminRegistration toggleModal={toggleModal} />
+          </Box>
+        </Modal>
       </Box>
     </ThemeProvider>
   );
