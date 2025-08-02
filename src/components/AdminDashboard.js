@@ -18,8 +18,6 @@ import SearchedSongs from "./SearchedSongs.js";
 import MemberQueue from "./MemberQueue";
 import axios from "axios";
 
-
-
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -60,7 +58,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 function AdminDashboard({ adminLogin }) {
   const dispatch = useDispatch();
   const [roomCode, setRoomCode] = useState(null);
-  
 
   const [query, setQuery] = useState(null);
 
@@ -132,7 +129,6 @@ function AdminDashboard({ adminLogin }) {
     }
   };
 
-
   useEffect(() => {
     fetchRoomCode();
   }, []);
@@ -174,7 +170,7 @@ function AdminDashboard({ adminLogin }) {
           }}
         >
           <Grid container spacing={2}>
-            <Grid size={6}>
+            <Grid size={roomCode ? 12 : 6}>
               <Typography
                 variant="h6"
                 sx={{
@@ -186,31 +182,33 @@ function AdminDashboard({ adminLogin }) {
                 {roomCode ? `Room Code: ${roomCode}` : "Create Room --->"}
               </Typography>
             </Grid>
-            <Grid size={6}>
-              <Button
-                variant="solid"
-                color="primary"
-                size="small"
-                sx={{
-                  borderRadius: "30px",
-                  px: 4,
-                  fontWeight: "bold",
-                  backgroundColor: "#565add",
-                  color: "#fff",
-                  "&:hover": {
-                    transform: "scale(1.05)",
-                  },
-                  transition: "all 0.3s ease",
-                  boxShadow: "lg",
-                  maxWidth: "200px",
-                  width: "200px",
-                  height: "35px",
-                }}
-                onClick={createRoom}
-              >
-                Create new room
-              </Button>
-            </Grid>
+            {!roomCode && (
+              <Grid size={6}>
+                <Button
+                  variant="solid"
+                  color="primary"
+                  size="small"
+                  sx={{
+                    borderRadius: "30px",
+                    px: 4,
+                    fontWeight: "bold",
+                    backgroundColor: "#565add",
+                    color: "#fff",
+                    "&:hover": {
+                      transform: "scale(1.05)",
+                    },
+                    transition: "all 0.3s ease",
+                    boxShadow: "lg",
+                    maxWidth: "200px",
+                    width: "200px",
+                    height: "35px",
+                  }}
+                  onClick={createRoom}
+                >
+                  Create new room
+                </Button>
+              </Grid>
+            )}
           </Grid>
         </Box>
 

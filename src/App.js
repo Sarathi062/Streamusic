@@ -18,9 +18,19 @@ import axios from "axios";
 function App() {
   // State to show/hide modal
   const [modalOpen, setModalOpen] = useState(false);
+  const [activeForm, setActiveForm] = useState(null);
 
   // Function to toggle modal
-  const toggleModal = () => setModalOpen(!modalOpen);
+  const toggleModal = (formType = null) => {
+    if (formType) {
+      setActiveForm(formType);
+      setModalOpen(true); // explicitly open modal for new form
+    } else {
+      setModalOpen(false);
+      setActiveForm(null);
+    }
+  };
+
   // Fetching the loging cookies
   const fetchAdminCookies = async () => {
     const res = await axios.get(
@@ -41,6 +51,7 @@ function App() {
   };
   const { data, isLoading, isError } = useAdminAuth();
   const adminLogin = data?.adminLogin ?? false;
+  const loggedIn = data?.loggedIn ?? false;
   // -------------------------------------------------------------
 
   const theme = createTheme({
@@ -62,14 +73,14 @@ function App() {
         <Routes>
           <Route
             path="/Streamusic"
-            element={<Home toggleModal={toggleModal} />}
+            element={<Home toggleModal={toggleModal} loggedIn={loggedIn}/>}
           />
           {/* <Route
             path="Streamusic/admin-registration"
             element={}
           /> */}
-          <Route path="Streamusic/admin-login" element={<AdminLogin />} />
-          <Route path="Streamusic/user-login" element={<UserLogin />} />
+          {/* <Route path="Streamusic/admin-login" element={<AdminLogin />} /> */}
+          {/* <Route path="Streamusic/user-login" element={<UserLogin />} /> */}
 
           <Route
             path="Streamusic/dashboard"
@@ -77,10 +88,10 @@ function App() {
           />
         </Routes>
 
-        <Footer toggleModal={toggleModal} />
+        <Footer toggleModal={toggleModal} loggedIn={loggedIn}/>
         <Modal
           open={modalOpen}
-          onClose={toggleModal}
+          onClose={() => toggleModal(null)}
           aria-labelledby="popup-modal-title"
           aria-describedby="popup-modal-description"
         >
@@ -103,7 +114,15 @@ function App() {
               justifyContent: "center", // Optional: center content vertically
             }}
           >
-            <AdminRegistration toggleModal={toggleModal} />
+            {activeForm === "adminRegistration" && (
+              <AdminRegistration toggleModal={toggleModal} />
+            )}
+            {activeForm === "adminLogin" && (
+              <AdminLogin toggleModal={toggleModal} />
+            )}
+            {activeForm === "userLogin" && (
+              <UserLogin toggleModal={toggleModal} />
+            )}
           </Box>
         </Modal>
       </Box>

@@ -26,7 +26,7 @@ import GIF from "../assets/Moving The Simpsons GIF.gif";
 // If you're using Typography from @mui/joy (optional)
 import Typography from "@mui/material/Typography";
 
-const Home = ({ toggleModal }) => {
+const Home = ({ toggleModal, loggedIn }) => {
   const Navigate = useNavigate();
 
   const theme = createTheme({
@@ -106,54 +106,54 @@ const Home = ({ toggleModal }) => {
                   Let the Crowd Choose the Beat
                 </Typography>
 
-                <Box sx={{ display: "flex", gap: 2 }}>
-                  <Button
-                    variant="solid"
-                    color="primary"
-                    size="small"
-                    sx={{
-                      mt: 1,
-                      borderRadius: "30px",
-                      px: 4,
-                      fontWeight: "bold",
-                      backgroundColor: "#4b42ae",
-                      color: "#fff",
-                      "&:hover": {
-                        transform: "scale(1.05)",
-                      },
-                      transition: "all 0.3s ease",
-                      boxShadow: "lg",
-                      maxWidth: "200px",
-                    }}
-                    onClick={toggleModal}
-                  >
-                    Host Music Session
-                  </Button>
-                  <Button
-                    variant="solid"
-                    color="primary"
-                    size="small"
-                    sx={{
-                      mt: 1,
-                      borderRadius: "30px",
-                      px: 4,
-                      fontWeight: "bold",
-                      backgroundColor: "#fff",
-                      color: "#565add",
-                      "&:hover": {
-                        transform: "scale(1.05)",
-                      },
-                      transition: "all 0.3s ease",
-                      boxShadow: "lg",
-                      maxWidth: "200px",
-                    }}
-                    onClick={() => {
-                      Navigate("/Streamusic/user-login");
-                    }}
-                  >
-                    Connect & Join Room
-                  </Button>
-                </Box>
+                {!loggedIn && (
+                  <Box sx={{ display: "flex", gap: 2 }}>
+                    <Button
+                      variant="solid"
+                      color="primary"
+                      size="small"
+                      sx={{
+                        mt: 1,
+                        borderRadius: "30px",
+                        px: 4,
+                        fontWeight: "bold",
+                        backgroundColor: "#4b42ae",
+                        color: "#fff",
+                        "&:hover": {
+                          transform: "scale(1.05)",
+                        },
+                        transition: "all 0.3s ease",
+                        boxShadow: "lg",
+                        maxWidth: "200px",
+                      }}
+                      onClick={() => toggleModal("adminLogin")}
+                    >
+                      Host Music Session
+                    </Button>
+                    <Button
+                      variant="solid"
+                      color="primary"
+                      size="small"
+                      sx={{
+                        mt: 1,
+                        borderRadius: "30px",
+                        px: 4,
+                        fontWeight: "bold",
+                        backgroundColor: "#fff",
+                        color: "#565add",
+                        "&:hover": {
+                          transform: "scale(1.05)",
+                        },
+                        transition: "all 0.3s ease",
+                        boxShadow: "lg",
+                        maxWidth: "200px",
+                      }}
+                      onClick={() => toggleModal("userLogin")}
+                    >
+                      Connect & Join Room
+                    </Button>
+                  </Box>
+                )}
                 <Box
                   component="section"
                   sx={{
@@ -242,29 +242,31 @@ const Home = ({ toggleModal }) => {
                       Revolutionize group music experiences with smart,
                       collaborative playlists!
                     </Typography>
-                    <Button
-                      variant="solid"
-                      color="primary"
-                      size="small"
-                      sx={{
-                        borderRadius: "30px",
-                        px: 4,
-                        fontWeight: "bold",
-                        backgroundColor: "#565add",
-                        color: "#fff",
-                        "&:hover": {
-                          transform: "scale(1.05)",
-                        },
-                        transition: "all 0.3s ease",
-                        boxShadow: "lg",
-                        maxWidth: "200px",
-                        width: "138px",
-                        height: "60px",
-                        border: "5px solid #4B42AD",
-                      }}
-                    >
-                      Try now
-                    </Button>
+                    {!loggedIn && (
+                      <Button
+                        variant="solid"
+                        color="primary"
+                        size="small"
+                        sx={{
+                          borderRadius: "30px",
+                          px: 4,
+                          fontWeight: "bold",
+                          backgroundColor: "#565add",
+                          color: "#fff",
+                          "&:hover": {
+                            transform: "scale(1.05)",
+                          },
+                          transition: "all 0.3s ease",
+                          boxShadow: "lg",
+                          maxWidth: "200px",
+                          width: "138px",
+                          height: "60px",
+                          border: "5px solid #4B42AD",
+                        }}
+                      >
+                        Try now
+                      </Button>
+                    )}
                   </Grid>
                 </Grid>
               </Box>

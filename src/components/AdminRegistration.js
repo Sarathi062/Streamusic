@@ -9,12 +9,14 @@ import {
   Stack,
   Paper,
   CircularProgress,
+  IconButton,
 } from "@mui/material";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
-import { amber, red } from "@mui/material/colors";
+import { amber } from "@mui/material/colors";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import axios from "axios";
+import CloseIcon from "@mui/icons-material/Close";
 
 const DemoPaper = styled(Paper)(({ theme }) => ({
   width: 120,
@@ -169,24 +171,35 @@ const AdminRegisterWithOtp = ({ toggleModal }) => {
           maxWidth: 600,
         }}
       >
-        <Container
-          maxWidth="sm"
-          sx={{
-            py: 0,
-          }}
-        >
+        <Container maxWidth="sm" sx={{ py: 0 }}>
           <Paper
             elevation={8}
             sx={{
+              position: "relative",
               px: { xs: 2, sm: 6 },
               pt: { xs: 4, sm: 8 },
               pb: { xs: 6, sm: 8 },
               borderRadius: 5,
               bgcolor: "#f0f4fc",
               boxShadow: "0 6px 30px 6px rgba(80,100,140,0.11)",
-              m: 4
+              m:4
             }}
           >
+            {/* Close cross icon */}
+            <IconButton
+              aria-label="close"
+              onClick={() => toggleModal(null)} 
+              sx={{
+                position: "absolute",
+                right: 16,
+                top: 16,
+                color: (theme) => theme.palette.grey[700],
+                zIndex: 1,
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+
             <Typography
               variant="h5"
               mb={2}
@@ -350,15 +363,6 @@ const AdminRegisterWithOtp = ({ toggleModal }) => {
                 </Button>
               </form>
             )}
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              onClick={toggleModal}
-              sx={{ mt: 2, fontWeight: "bold" }}
-            >
-              Close
-            </Button>
           </Paper>
         </Container>
       </Box>

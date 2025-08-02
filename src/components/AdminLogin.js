@@ -1,263 +1,267 @@
-import * as React from "react";
+import React, { useState } from "react";
 import {
-  Button,
-  FormControl,
-  Checkbox,
-  FormControlLabel,
-  InputLabel,
-  OutlinedInput,
   TextField,
-  InputAdornment,
-  Link,
-  IconButton,
+  Button,
+  Box,
+  Typography,
   Alert,
+  Container,
+  Stack,
+  Paper,
+  FormControlLabel,
+  Checkbox,
+  InputAdornment,
+  IconButton,
+  CircularProgress,
 } from "@mui/material";
+import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
+import { amber } from "@mui/material/colors";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { AppProvider } from "@toolpad/core/AppProvider";
-import { SignInPage } from "@toolpad/core/SignInPage";
-import { useTheme } from "@mui/material/styles";
+import CloseIcon from "@mui/icons-material/Close";
 
-import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+const theme = createTheme({
+  palette: {
+    background: { default: "#f0f4fc" },
+    primary: { main: "#565add" },
+    amber: { main: amber[800], contrastText: "#fff" },
+    secondary: { main: "#E0C2FF", white: "#fff", contrastText: "#47008F" },
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        contained: { borderRadius: 30, fontWeight: "bold" },
+        outlined: { borderRadius: 30 },
+      },
+    },
+  },
+});
 
-const providers = [{ id: "credentials", name: "Email and Password" }];
+export default function AdminLoginModal({ toggleModal }) {
+  const [values, setValues] = useState({
+    email: "",
+    password: "",
+    remember: false,
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [status, setStatus] = useState(""); // "success", "error", "notfound", "exception"
+  const [waiting, setWaiting] = useState(false);
 
-function CustomEmailField({ EmailRef }) {
-  return (
-    <TextField
-      id="input-with-icon-textfield"
-      label="Email"
-      name="email"
-      type="email"
-      size="small"
-      required
-      fullWidth
-      inputRef={EmailRef}
-      slotProps={{
-        input: {
-          startAdornment: (
-            <InputAdornment position="start">
-              <AccountCircle fontSize="inherit" />
-            </InputAdornment>
-          ),
-        },
-      }}
-      variant="outlined"
-    />
-  );
-}
-
-function CustomPasswordField({ PasswordRef }) {
-  const [showPassword, setShowPassword] = React.useState(false);
-
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
-
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setValues((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
-  return (
-    <FormControl sx={{ my: 2 }} fullWidth variant="outlined">
-      <InputLabel size="small" htmlFor="outlined-adornment-password">
-        Password
-      </InputLabel>
-      <OutlinedInput
-        id="outlined-adornment-password"
-        type={showPassword ? "text" : "password"}
-        name="password"
-        size="small"
-        inputRef={PasswordRef}
-        endAdornment={
-          <InputAdornment position="end">
-            <IconButton
-              aria-label="toggle password visibility"
-              onClick={handleClickShowPassword}
-              onMouseDown={handleMouseDownPassword}
-              edge="end"
-              size="small"
-            >
-              {showPassword ? (
-                <VisibilityOff fontSize="inherit" />
-              ) : (
-                <Visibility fontSize="inherit" />
-              )}
-            </IconButton>
-          </InputAdornment>
-        }
-        label="Password"
-      />
-    </FormControl>
-  );
-}
+  const handleTogglePassword = () => setShowPassword((show) => !show);
 
-function CustomButton({ EmailRef, PasswordRef, setLoginStatus }) {
-  const AdminLogin = async () => {
-    const email = EmailRef.current.value;
-    const password = PasswordRef.current.value;
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setStatus("");
+    setWaiting(true);
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BackEnd}/admin/login`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           credentials: "include",
-          body: JSON.stringify({ mail: email, password }),
+          body: JSON.stringify({
+            mail: values.email,
+            password: values.password,
+          }),
         }
       );
-      const data = await response.json();
+      setWaiting(false);
 
-      if (response.status === 400) {
-        setLoginStatus("notfound");
-      } else if (response.ok) {
-        setLoginStatus("success");
+      if (response.status === 400) setStatus("notfound");
+      else if (response.ok) {
+        setStatus("success");
         setTimeout(() => {
-          window.location.href = "/Streamusic"; // redirect after short delay
+          window.location.href = "/Streamusic";
         }, 1000);
-      } else {
-        setLoginStatus("error");
-      }
-    } catch (error) {
-      console.error("Error during login:", error);
-      setLoginStatus("exception");
+      } else setStatus("error");
+    } catch (err) {
+      setWaiting(false);
+      setStatus("exception");
     }
   };
 
   return (
-    <Button
-      type="submit"
-      variant="outlined"
-      color="info"
-      size="small"
-      disableElevation
-      fullWidth
-      sx={{ my: 2 }}
-      onClick={AdminLogin}
-    >
-      Log In
-    </Button>
-  );
-}
-
-function SignUpLink() {
-  const navigate = useNavigate();
-  const signup = () => {
-    navigate("/Streamusic/admin-registration");
-  };
-  return (
-    <Link onClick={signup} variant="body2">
-      Sign up
-    </Link>
-  );
-}
-
-function ForgotPasswordLink() {
-  return (
-    <Link href="/" variant="body2">
-      Forgot password?
-    </Link>
-  );
-}
-
-function Title() {
-  return <h2 style={{ marginBottom: 8 }}>Login</h2>;
-}
-
-function Subtitle({ loginStatus }) {
-  if (loginStatus === "success") {
-    return (
-      <Alert severity="success" sx={{ mb: 2, px: 1, py: 0.25 }}>
-        Login successful!
-      </Alert>
-    );
-  } else if (loginStatus === "notfound") {
-    return (
-      <Alert severity="error" sx={{ mb: 2, px: 1, py: 0.25 }}>
-        User not found.
-      </Alert>
-    );
-  } else if (loginStatus === "error") {
-    return (
-      <Alert severity="error" sx={{ mb: 2, px: 1, py: 0.25 }}>
-        Invalid credentials.
-      </Alert>
-    );
-  } else if (loginStatus === "exception") {
-    return (
-      <Alert severity="warning" sx={{ mb: 2, px: 1, py: 0.25 }}>
-        An error occurred. Please try again.
-      </Alert>
-    );
-  } else {
-    return null; // nothing shown initially
-  }
-}
-
-function RememberMeCheckbox() {
-  const theme = useTheme();
-  return (
-    <FormControlLabel
-      label="Remember me"
-      control={
-        <Checkbox
-          name="remember"
-          value="true"
-          color="primary"
-          sx={{ padding: 0.5, "& .MuiSvgIcon-root": { fontSize: 20 } }}
-        />
-      }
-      slotProps={{
-        typography: {
-          color: "textSecondary",
-          fontSize: theme.typography.pxToRem(14),
-        },
-      }}
-    />
-  );
-}
-
-export default function SlotsSignIn() {
-  const theme = useTheme();
-  const EmailRef = useRef(null);
-  const PasswordRef = useRef(null);
-  const [loginStatus, setLoginStatus] = useState(null); // can be: "success", "error", "notfound", etc.
-
-  return (
-    <AppProvider theme={theme}>
-      <SignInPage
-        // signIn={(provider, formData) =>
-        //   alert(
-        //     `Logging in with "${provider.name}" and credentials: ${formData.get("email")}, ${formData.get("password")}, and checkbox value: ${formData.get("remember")}`
-        //   )
-        // }
-        slots={{
-          // expects a fuction/react componet to be passed
-          title: Title,
-          subtitle: () => <Subtitle loginStatus={loginStatus} />,
-          emailField: (props) => (
-            <CustomEmailField EmailRef={EmailRef} {...props} /> //{...props} sends all the old and new props
-          ),
-          passwordField: (props) => (
-            <CustomPasswordField PasswordRef={PasswordRef} {...props} />
-          ),
-          submitButton: (props) => (
-            <CustomButton
-              EmailRef={EmailRef}
-              PasswordRef={PasswordRef}
-              setLoginStatus={setLoginStatus}
-              {...props}
-            />
-          ),
-          signUpLink: SignUpLink, //SignUpLink is a function
-          rememberMe: RememberMeCheckbox,
-          forgotPasswordLink: ForgotPasswordLink,
+    <ThemeProvider theme={theme}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          p: 0,
+          maxWidth: 600,
         }}
-        slotProps={{ form: { noValidate: true } }}
-        providers={providers}
-      />
-    </AppProvider>
+      >
+        <Container maxWidth="sm" sx={{ py: 0 }}>
+          <Paper
+            elevation={8}
+            sx={{
+              position: "relative",
+              px: { xs: 2, sm: 6 },
+              pt: { xs: 4, sm: 8 },
+              pb: { xs: 6, sm: 8 },
+              borderRadius: 5,
+              bgcolor: "#f0f4fc",
+              boxShadow: "0 6px 30px 6px rgba(80,100,140,0.11)",
+              m: 4,
+            }}
+          >
+            {/* Cross icon at top right */}
+            <IconButton
+              aria-label="close"
+              onClick={() => toggleModal(null)} 
+              sx={{
+                position: "absolute",
+                right: 16,
+                top: 16,
+                color: (theme) => theme.palette.grey[700],
+                zIndex: 1,
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+
+            <Typography
+              variant="h5"
+              mb={2}
+              color="primary"
+              fontWeight={700}
+              align="center"
+              sx={{ letterSpacing: 0.5 }}
+            >
+              Admin Login
+            </Typography>
+
+            {status === "success" && (
+              <Alert severity="success" sx={{ mb: 2 }}>
+                Login successful!
+              </Alert>
+            )}
+            {status === "notfound" && (
+              <Alert severity="error" sx={{ mb: 2 }}>
+                User not found.
+              </Alert>
+            )}
+            {status === "error" && (
+              <Alert severity="error" sx={{ mb: 2 }}>
+                Invalid credentials.
+              </Alert>
+            )}
+            {status === "exception" && (
+              <Alert severity="warning" sx={{ mb: 2 }}>
+                An error occurred. Please try again.
+              </Alert>
+            )}
+            {waiting && (
+              <Stack sx={{ width: "100%" }} alignItems="center" mb={2}>
+                <CircularProgress size={30} color="primary" />
+              </Stack>
+            )}
+
+            <form onSubmit={handleLogin} noValidate>
+              <TextField
+                label="Email"
+                fullWidth
+                name="email"
+                variant="standard"
+                margin="normal"
+                required
+                value={values.email}
+                onChange={handleInputChange}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <AccountCircle />
+                    </InputAdornment>
+                  ),
+                }}
+                autoComplete="email"
+              />
+
+              <TextField
+                label="Password"
+                fullWidth
+                name="password"
+                type={showPassword ? "text" : "password"}
+                variant="standard"
+                margin="normal"
+                required
+                value={values.password}
+                onChange={handleInputChange}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={handleTogglePassword}
+                        edge="end"
+                        size="small"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                autoComplete="current-password"
+              />
+
+              {/* <FormControlLabel
+                control={
+                  <Checkbox
+                    name="remember"
+                    checked={values.remember}
+                    onChange={handleInputChange}
+                    color="primary"
+                  />
+                }
+                label="Remember me"
+                sx={{ my: 1 }}
+              /> */}
+
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+                sx={{ mt: 2, fontWeight: "bold" }}
+                disabled={waiting}
+              >
+                Login
+              </Button>
+            </form>
+
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              mt={3}
+            >
+              <Button
+                variant="text"
+                onClick={() => toggleModal("adminRegistration")}
+                sx={{ fontWeight: "bold", textTransform: "none" }}
+              >
+                Sign up
+              </Button>
+              <Button
+                variant="text"
+                href="/"
+                sx={{ fontWeight: "bold", textTransform: "none" }}
+              >
+                Forgot password?
+              </Button>
+            </Stack>
+          </Paper>
+        </Container>
+      </Box>
+    </ThemeProvider>
   );
 }

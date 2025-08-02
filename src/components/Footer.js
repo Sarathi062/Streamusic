@@ -2,19 +2,12 @@ import { Box, Typography, Divider, Link } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Grid from "@mui/material/Grid2";
 
-const Footer = ({toggleModal}) => {
+const Footer = ({ toggleModal, loggedIn }) => {
   const navigate = useNavigate();
   const gohome = () => {
-  navigate("/Streamusic");
-  window.scrollTo(0, 0); // ✅ Scroll to top
-};
-
-const login = () => {
-  navigate("/Streamusic/admin-login");
-  window.scrollTo(0, 0);
-};
-
-
+    navigate("/Streamusic");
+    window.scrollTo(0, 0); // ✅ Scroll to top
+  };
 
   return (
     <Box
@@ -58,7 +51,7 @@ const login = () => {
           </Grid>
           <Grid>
             <Link
-              onClick={login}
+              onClick={() => (!loggedIn ? toggleModal("adminLogin") : gohome())}
               color="#3d2e7c"
               underline="hover"
               display="block"
@@ -69,7 +62,9 @@ const login = () => {
           </Grid>
           <Grid>
             <Link
-               onClick={toggleModal}
+              onClick={() =>
+                !loggedIn ? toggleModal("adminRegistration") : gohome()
+              }
               color="inherit"
               underline="hover"
               display="block"
